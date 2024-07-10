@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_staff/home_page/user.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -17,6 +18,8 @@ class _TextFormState extends State<TextForm> {
   final _name = TextEditingController();
   final _patronymic = TextEditingController();
   final _number = TextEditingController();
+  final _deviceDate = TextEditingController();
+  final _medicalBook = TextEditingController();
 
   XFile? _image;
   final ImagePicker _picker = ImagePicker();
@@ -32,6 +35,8 @@ class _TextFormState extends State<TextForm> {
     _name.dispose();
     _patronymic.dispose();
     _number.dispose();
+    _deviceDate.dispose();
+    _medicalBook.dispose();
     super.dispose();
   }
 
@@ -45,14 +50,26 @@ class _TextFormState extends State<TextForm> {
     });
   }
 
-  void saveUser() {
+  void saveUser() async {
+    if (!mounted) return;
+
     final newUser = User(
       surname: _surname.text,
       name: _name.text,
       patronymic: _patronymic.text,
       number: _number.text,
+      imagePath: _image?.path,
+      medicalBook: _medicalBook.text,
+      deviceDate: _deviceDate.text,
     );
+
     widget.onEmployeeAdded(newUser);
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (mounted) {
+      Navigator.of(context).pop(newUser);
+    }
   }
 
   User newUser = User();
@@ -60,39 +77,36 @@ class _TextFormState extends State<TextForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Регистрация нового сотрудника',
+                style: TextStyle(fontSize: 21, color: Colors.black),
+              ),
+              IconButton(
+                onPressed: () {
+                  saveUser();
+                  Navigator.of(context).pop(newUser);
+                },
+                icon: const Icon(
+                  Icons.save,
+                  size: 35,
+                ),
+              ),
+            ],
+          )),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(25, 5, 25, 0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-                  child: Text(
-                    'Регистрация нового сотрудника',
-                    style: TextStyle(fontSize: 19, color: Colors.black),
-                  ),
-                ),
-                const SizedBox(
-                  width: 7,
-                ),
-                IconButton(
-                  onPressed: () {
-                    saveUser();
-                    Navigator.of(context).pop(newUser);
-                  },
-                  icon: const Icon(
-                    Icons.save,
-                    size: 35,
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(
-              height: 10,
+              height: 15,
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,14 +216,53 @@ class _TextFormState extends State<TextForm> {
               onChanged: (value) => newUser.number = value,
             ),
             const SizedBox(height: 20),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Выберите дату'),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(1, 0, 1, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      inputFormatters: [LengthLimitingTextInputFormatter(10)],
+                      keyboardType: TextInputType.number,
+                      controller: _deviceDate,
+                      decoration: const InputDecoration(
+                        labelText: 'Дата устройства',
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          borderSide:
+                              BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+                        ),
+                      ),
+                      onChanged: (value) => newUser.deviceDate = value,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextFormField(
+                      inputFormatters: [LengthLimitingTextInputFormatter(10)],
+                      keyboardType: TextInputType.number,
+                      controller: _medicalBook,
+                      decoration: const InputDecoration(
+                        labelText: 'Медкнижка',
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          borderSide:
+                              BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+                        ),
+                      ),
+                      onChanged: (value) => newUser.medicalBook = value,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
