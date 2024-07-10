@@ -6,7 +6,7 @@ import 'package:flutter_staff/home_page/user.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class AddingAPerson extends StatefulWidget {
-  const AddingAPerson({Key? key}) : super(key: key);
+  const AddingAPerson({super.key});
 
   @override
   State<AddingAPerson> createState() => _AddingAPersonState();
@@ -33,107 +33,78 @@ class _AddingAPersonState extends State<AddingAPerson>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Stack(
         children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 400,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(120),
-                  bottomRight: Radius.circular(0),
-                ),
-                color: Color.fromARGB(255, 255, 0, 0),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 255, 0, 0),
+                  Color.fromARGB(255, 255, 255, 255),
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
               ),
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 60),
-                      child: SizedBox(
-                        height: 150,
-                        width: 150,
-                        child: Image.asset(
-                          'assets/icons/lgv9s1kz-removebg-preview.png',
-                        ),
-                      ),
+          Positioned.fill(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 350),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height - 350,
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: const [
+                        BuildPersonListView(),
+                        ArchivePage(),
+                      ],
                     ),
-                  ],
-                ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
-          CustomScrollView(
-            slivers: [
-              StreamBuilder(
-                stream: userBox.watch(),
-                builder: (context, snapshot) {
-                  return SliverAppBar(
-                    automaticallyImplyLeading: false,
-                    pinned: true,
-                    backgroundColor: Colors.transparent,
-                    expandedHeight: MediaQuery.of(context).size.height * 0.35,
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      title: Padding(
-                        padding: const EdgeInsets.only(top: 230),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                _tabController.animateTo(0);
-                              },
-                              icon: const Icon(
-                                Icons.person,
-                                size: 35,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            IconButton(
-                              onPressed: () {
-                                _tabController.animateTo(1);
-                              },
-                              icon: const Icon(
-                                Icons.archive,
-                                size: 35,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              SliverFillRemaining(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: const [
-                    BuildPersonListView(),
-                    ArchivePage(),
-                  ],
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 60),
+                child: SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: Image.asset(
+                    'assets/icons/lgv9s1kz-removebg-preview.png',
+                  ),
                 ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      _tabController.animateTo(0);
+                    },
+                    icon: const Icon(
+                      Icons.person,
+                      size: 50,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    onPressed: () {
+                      _tabController.animateTo(1);
+                    },
+                    icon: const Icon(
+                      Icons.archive,
+                      size: 50,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -146,10 +117,13 @@ class _AddingAPersonState extends State<AddingAPerson>
             isScrollControlled: true,
             context: context,
             builder: (BuildContext context) {
-              return FractionallySizedBox(
-                heightFactor: 0.5,
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
+              return ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
+                ),
+                child: FractionallySizedBox(
+                  heightFactor: 0.53,
                   child: TextForm(
                     onEmployeeAdded: _addUser,
                   ),
