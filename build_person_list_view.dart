@@ -6,7 +6,7 @@ import 'package:flutter_staff/home_page/user.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class BuildPersonListView extends StatefulWidget {
-  const BuildPersonListView({super.key});
+  const BuildPersonListView({Key? key});
 
   @override
   State<BuildPersonListView> createState() => _BuildPersonListViewState();
@@ -34,7 +34,9 @@ class _BuildPersonListViewState extends State<BuildPersonListView> {
     return ValueListenableBuilder(
       valueListenable: userBox.listenable(),
       builder: (context, Box<User> box, _) {
-        final users = box.values.toList().cast<User>();
+        List<User> users = box.values.toList().cast<User>();
+        users.sort((a, b) =>
+            b.key.compareTo(a.key)); // Сортировка по ключу в обратном порядке
 
         return ListView.builder(
           itemCount: users.length,
