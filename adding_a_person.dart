@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staff/archive/archive_page.dart';
 import 'package:flutter_staff/home_page/build_person_list_view.dart';
 import 'package:flutter_staff/home_page/text_form.dart';
 import 'package:flutter_staff/home_page/user.dart';
@@ -12,16 +11,13 @@ class AddingAPerson extends StatefulWidget {
   State<AddingAPerson> createState() => _AddingAPersonState();
 }
 
-class _AddingAPersonState extends State<AddingAPerson>
-    with SingleTickerProviderStateMixin {
+class _AddingAPersonState extends State<AddingAPerson> {
   late Box<User> userBox;
-  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     userBox = Hive.box<User>('users');
-    _tabController = TabController(length: 2, vsync: this);
   }
 
   void _addUser(User user) {
@@ -46,66 +42,53 @@ class _AddingAPersonState extends State<AddingAPerson>
                 end: Alignment.topCenter,
               ),
             ),
-          ),
-          Positioned.fill(
-            child: SingleChildScrollView(
+            child: Center(
               child: Column(
                 children: [
-                  const SizedBox(height: 350),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height - 350,
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: const [
-                        BuildPersonListView(),
-                        ArchivePage(),
-                      ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60),
+                    child: SizedBox(
+                      height: 200,
+                      width: 200,
+                      child: Image.asset(
+                        'assets/icons/lgv9s1kz-removebg-preview.png',
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 60),
-                child: SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: Image.asset(
-                    'assets/icons/lgv9s1kz-removebg-preview.png',
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 300,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  title: Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 260, 5, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.search,
+                            size: 30,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.sort),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      _tabController.animateTo(0);
-                    },
-                    icon: const Icon(
-                      Icons.person,
-                      size: 50,
-                      color: Color.fromARGB(255, 255, 255, 255),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  IconButton(
-                    onPressed: () {
-                      _tabController.animateTo(1);
-                    },
-                    icon: const Icon(
-                      Icons.archive,
-                      size: 50,
-                      color: Color.fromARGB(255, 255, 255, 255),
-                    ),
-                  ),
-                ],
-              ),
+              const BuildPersonListView(scrollOffset: 0.0),
             ],
           ),
         ],
