@@ -76,19 +76,24 @@ class _AddingAPersonState extends State<AddingAPerson> {
                           onPressed: () {},
                           icon: const Icon(
                             Icons.search,
-                            size: 30,
+                            size: 25,
                           ),
                         ),
                         IconButton(
                           onPressed: () {},
-                          icon: const Icon(Icons.sort),
+                          icon: const Icon(
+                            Icons.sort,
+                            size: 25,
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-              const BuildPersonListView(scrollOffset: 0.0),
+              const BuildPersonListView(
+                scrollOffset: 0.0,
+              ),
             ],
           ),
         ],
