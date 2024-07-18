@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 class ChangePersonList extends StatefulWidget {
   final User user;
 
-  const ChangePersonList({Key? key, required this.user}) : super(key: key);
+  const ChangePersonList({super.key, required this.user});
 
   @override
   State<ChangePersonList> createState() => _ChangePersonListState();
