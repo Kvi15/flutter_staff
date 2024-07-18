@@ -13,17 +13,52 @@ class AddingAPerson extends StatefulWidget {
 
 class _AddingAPersonState extends State<AddingAPerson> {
   late Box<User> userBox;
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
     userBox = Hive.box<User>('users');
+    _searchController.addListener(_updateSearchState);
+    _searchFocusNode.addListener(_handleFocusChange);
   }
 
   void _addUser(User user) {
     setState(() {
       userBox.add(user);
     });
+  }
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearching = !_isSearching;
+      if (!_isSearching) {
+        _searchController.clear();
+      } else {
+        _searchFocusNode.requestFocus();
+      }
+    });
+  }
+
+  void _updateSearchState() {
+    setState(() {});
+  }
+
+  void _handleFocusChange() {
+    if (!_searchFocusNode.hasFocus && _searchController.text.isEmpty) {
+      setState(() {
+        _isSearching = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -68,17 +103,27 @@ class _AddingAPersonState extends State<AddingAPerson> {
                 flexibleSpace: FlexibleSpaceBar(
                   centerTitle: true,
                   title: Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 260, 5, 0),
+                    padding: const EdgeInsets.fromLTRB(5, 260, 5, 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.search,
-                            size: 25,
-                          ),
-                        ),
+                        _isSearching
+                            ? Expanded(
+                                child: TextField(
+                                  controller: _searchController,
+                                  focusNode: _searchFocusNode,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Поиск',
+                                  ),
+                                ),
+                              )
+                            : IconButton(
+                                onPressed: _toggleSearch,
+                                icon: const Icon(
+                                  Icons.search,
+                                  size: 25,
+                                ),
+                              ),
                         IconButton(
                           onPressed: () {},
                           icon: const Icon(
